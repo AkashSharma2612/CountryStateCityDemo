@@ -16,5 +16,7 @@ namespace Country_city_state.models
         public DbSet<State> States { get; set; }
 
         public DbSet<City> Cities { get; set; }
+
+        public DbSet<User> Users { get; set; }
     }
 }

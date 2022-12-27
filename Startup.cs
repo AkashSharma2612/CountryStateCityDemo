@@ -1,4 +1,5 @@
 using Country_city_state.models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -8,10 +9,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Country_city_state
@@ -31,12 +36,42 @@ namespace Country_city_state
             string cs = Configuration.GetConnectionString("con");
             services.AddDbContext<ApplicationDbcontext>(options => options.UseSqlServer(cs));
             services.AddSingleton<SecurityPurpose>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+
+
             services.AddDataProtection();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Country_city_state", Version = "v1" });
             });
+            //jwt
+            //JSonWEbToken Authentication
+            var appsettingssection = Configuration.GetSection("Appsettings");
+           services.Configure<Appsettings>(appsettingssection);
+            var appsetting = appsettingssection.Get<Appsettings>();
+            var key = Encoding.ASCII.GetBytes(appsetting.Secret);
+           services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                };
+
+
+            });
+
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: "MyPolicy",
@@ -63,7 +98,7 @@ namespace Country_city_state
 
             app.UseCors("MyPolicy");
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseRouting();
 
             app.UseAuthorization();
