@@ -1,4 +1,5 @@
 ﻿using Country_city_state.models;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,15 +15,26 @@ namespace Country_city_state.Controllers
     public class CityController : ControllerBase
     {
         private readonly ApplicationDbcontext _context;
+        private readonly IDataProtector _dataprotector;
 
-        public CityController(ApplicationDbcontext context)
+        public CityController(ApplicationDbcontext context, IDataProtectionProvider dataProtectionProvider, SecurityPurpose securityPurpose)
         {
             _context = context;
+            _dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
         }
         [HttpGet]
         public IActionResult GetCity()
         {
-            return Ok(_context.Cities.Include(c => c.State).Include(c => c.State.Country).ToList());
+            var citiesList=_context.Cities.Include(c => c.State).Include(c => c.State.Country).ToList();
+            var outData = _context.Cities.Select(e => new
+            {
+                id = _dataprotector.Protect(e.id.ToString()),
+                name = _dataprotector.Protect(e.Name),
+                StateID = _dataprotector.Protect(e.Stateid.ToString()),
+                StateName=_dataprotector.Protect(e.State.Name),
+                e.State.Country
+            }); ;
+            return Ok(outData);
 
         }
         [HttpPost]
