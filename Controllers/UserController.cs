@@ -16,27 +16,18 @@ namespace Country_city_state.Controllers
     {
 
         private readonly IUserRepository _userRepository;
-        private readonly IDataProtector _dataProtector;
-        public UserController(IUserRepository userRepository, IDataProtectionProvider dataProtectionProvider, SecurityPurpose securityPurpose)
+        //private readonly IDataProtector _dataProtector;
+        public UserController(IUserRepository userRepository/*, IDataProtectionProvider dataProtectionProvider, SecurityPurpose securityPurpose*/)
         {
             _userRepository = userRepository;
-            _dataProtector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
+           // _dataProtector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
         }
         [HttpGet]
         public IActionResult GetUsers()
         {
 
-            var userInList = _userRepository.GetUsers().Select(e =>
-            {
-                e.UserName = _dataProtector.Protect(e.UserName);
-                e.Password = _dataProtector.Protect(e.Password);
-                /*e.UserName = _dataProtector.Unprotect(e.UserName);
-                e.Password = _dataProtector.Unprotect(e.Password);*/
-                // e.Role = _dataProtector.Unprotect(e.Role);
-                e.Role = _dataProtector.Protect(e.Role);
-                return e;
-
-            });
+            var userInList = _userRepository.GetUsers().ToList();
+           
             return Ok(userInList);
 
         }

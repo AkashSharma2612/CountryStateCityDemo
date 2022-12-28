@@ -17,34 +17,49 @@ namespace Country_city_state.Controllers
     public class CityController : ControllerBase
     {
         private readonly ApplicationDbcontext _context;
-        private readonly IDataProtector _dataprotector;
+       // private readonly IDataProtector _dataprotector;
 
-        public CityController(ApplicationDbcontext context, IDataProtectionProvider dataProtectionProvider, SecurityPurpose securityPurpose)
+        public CityController(ApplicationDbcontext context/*, IDataProtectionProvider dataProtectionProvider, SecurityPurpose securityPurpose*/)
         {
             _context = context;
-            _dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
+//_dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
         }
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetCity()
         {
-            var citiesList=_context.Cities.Include(c => c.State).Include(c => c.State.Country).ToList();
-            var outData = _context.Cities.Select(e => new
+                var citiesList = _context.Cities.Include(c => c.State).Include(c => c.State.Country).ToList().Select(e => new
+                {
+                id = e.id,
+                name = SecurityPurpose.DecrtyptionData(e.Name),
+                stateid = e.Stateid,
+                statename = SecurityPurpose.DecrtyptionData(e.State.Name),
+                countryid = e.State.Countryid,
+                countryname = SecurityPurpose.DecrtyptionData(e.State.Country.Name),
+
+            });
+            /*var outData =citiesList.Select(e => new
             {
-                id = _dataprotector.Protect(e.id.ToString()),
-                name = _dataprotector.Protect(e.Name),
-                StateID = _dataprotector.Protect(e.Stateid.ToString()),
-                StateName=_dataprotector.Protect(e.State.Name),
-                e.State.Country
-            }); ;
-            return Ok(outData);
+                id=e.id,
+                name=SecurityPurpose.DecrtyptionData(e.Name),
+                stateid=e.Stateid,
+                statename=SecurityPurpose.DecrtyptionData(e.State.Name),
+                countryid=e.State.Countryid,
+                countryname=SecurityPurpose.DecrtyptionData(e.State.Country.Name),
+            });*/
+
+            return Ok(citiesList);
 
         }
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveCities([FromBody]City city)
         {
             if (city == null) return BadRequest();
             else
             {
+               city.Name = SecurityPurpose.Encrtyption(city.Name);
+               // city.Name = _dataprotector.Protect(city.Name);
                 _context.Cities.Add(city);
                 _context.SaveChanges();
             }

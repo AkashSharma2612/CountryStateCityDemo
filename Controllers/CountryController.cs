@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Country_city_state.Controllers
@@ -17,35 +18,45 @@ namespace Country_city_state.Controllers
     public class CountryController : ControllerBase
     {
         private readonly ApplicationDbcontext _context;
-        private readonly IDataProtector _dataprotector;
+     //   private readonly IDataProtector _dataprotector;
 
-        public CountryController(ApplicationDbcontext context,IDataProtectionProvider dataProtectionProvider ,SecurityPurpose securityPurpose)
+        public CountryController(ApplicationDbcontext context/*IDataProtectionProvider dataProtectionProvider ,SecurityPurpose securityPurpose*/)
         {
             _context = context;
-            _dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
+          // _dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.key);
         }
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetCountry()
         {
-           var country= _context.Countries.ToList();
-            var Data = _context.Countries.Select(e => new
+            var countryList = _context.Countries.ToList().Select(e =>new
+             {
+                 id = e.id,
+                name = SecurityPurpose.DecrtyptionData(e.Name)
+             });
+           /* var Data = _context.Countries.Select(e => new
             {
-                id = _dataprotector.Protect(e.id.ToString()),
-                name=_dataprotector.Protect(e.Name),
-            }); 
-            return Ok(Data);
+                id = e.id,
+                name = SecurityPurpose.DecrtyptionData(e.Name)
+
+            });*/
+            return Ok(countryList);
             
         }
+        [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveCountry([FromBody] Country country)
         {
-           _context.Countries.Add(country);
+            country.Name =SecurityPurpose.Encrtyption(country.Name);
+           // country.id = Encrtyption(country.id.ToString());
+            _context.Countries.Add(country);
             _context.SaveChanges();
             return Ok(new { message="Data saved"});
         }
         [HttpPut]
         public IActionResult UpdateCountry([FromBody] Country country)
         {
+
                 _context.Countries.Update(country);
                 _context.SaveChanges();
                 return Ok(new { message = "data updated" });
@@ -59,5 +70,6 @@ namespace Country_city_state.Controllers
             return Ok();
 
         }
+       
     }
 }

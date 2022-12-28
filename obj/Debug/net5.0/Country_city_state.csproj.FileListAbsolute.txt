@@ -8,6 +8,7 @@ E:\Country_city_state\bin\Debug\net5.0\Country_city_state.dll
 E:\Country_city_state\bin\Debug\net5.0\ref\Country_city_state.dll
 E:\Country_city_state\bin\Debug\net5.0\Country_city_state.pdb
 E:\Country_city_state\bin\Debug\net5.0\Humanizer.dll
+E:\Country_city_state\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 E:\Country_city_state\bin\Debug\net5.0\Microsoft.Data.SqlClient.dll
 E:\Country_city_state\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.dll
 E:\Country_city_state\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Abstractions.dll
@@ -57,5 +58,3 @@ E:\Country_city_state\obj\Debug\net5.0\Country_city_state.dll
 E:\Country_city_state\obj\Debug\net5.0\ref\Country_city_state.dll
 E:\Country_city_state\obj\Debug\net5.0\Country_city_state.pdb
 E:\Country_city_state\obj\Debug\net5.0\Country_city_state.genruntimeconfig.cache
-E:\Country_city_state\obj\Debug\net5.0\Country_city_state.csproj.AssemblyReference.cache
-E:\Country_city_state\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
