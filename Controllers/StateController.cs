@@ -24,33 +24,26 @@ namespace Country_city_state.Controllers
            // _dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
 
         }
-        [AllowAnonymous]
+       // [AllowAnonymous]
         [HttpGet]
         public IActionResult GetState()
         {
             var statesList = _context.States.Include(s => s.Country).ToList().Select(e => new
             {
                 id = e.id,
-                name = SecurityPurpose.DecrtyptionData(e.Name),
+                name = SecurityPurpose.DecryptionData(e.Name),
                 countryid = e.Countryid,
-                country = SecurityPurpose.DecrtyptionData(e.Country.Name)
+                country = SecurityPurpose.DecryptionData(e.Country.Name)
             });
-            /*var data = _context.States.Select(e => new
-            {
-               *//* id = _dataprotector.Protect(e.id.ToString()),
-                name = _dataprotector.Protect(e.Name),
-                countryid = _dataprotector.Protect(e.Countryid.ToString()),
-                countryname = _dataprotector.Protect(e.Country.Name),*//*
-               
-            });*/
+          
 
             return Ok(statesList);
         }
-        [AllowAnonymous]
+        
         [HttpPost]
         public IActionResult SaveState([FromBody] State state)
         {
-            state.Name = SecurityPurpose.Encrtyption(state.Name);
+            state.Name = SecurityPurpose.Encryption(state.Name);
             _context.States.Add(state);
             _context.SaveChanges();
             return Ok();

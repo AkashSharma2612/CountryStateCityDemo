@@ -25,29 +25,26 @@ namespace Country_city_state.Controllers
             _context = context;
           // _dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.key);
         }
-        [AllowAnonymous]
+        // [AllowAnonymous]
         [HttpGet]
         public IActionResult GetCountry()
         {
-            var countryList = _context.Countries.ToList().Select(e =>new
-             {
-                 id = e.id,
-                name = SecurityPurpose.DecrtyptionData(e.Name)
-             });
-           /* var Data = _context.Countries.Select(e => new
+           
+            var countryList = _context.Countries.ToList();
+            var data=_context.Countries.Select(e => new
             {
                 id = e.id,
-                name = SecurityPurpose.DecrtyptionData(e.Name)
+                name = SecurityPurpose.DecryptionData(e.Name)
+            });
+          
+            return Ok(data);
 
-            });*/
-            return Ok(countryList);
-            
         }
-        [AllowAnonymous]
+       // [AllowAnonymous]
         [HttpPost]
         public IActionResult SaveCountry([FromBody] Country country)
         {
-            country.Name =SecurityPurpose.Encrtyption(country.Name);
+            country.Name =SecurityPurpose.Encryption(country.Name);
            // country.id = Encrtyption(country.id.ToString());
             _context.Countries.Add(country);
             _context.SaveChanges();

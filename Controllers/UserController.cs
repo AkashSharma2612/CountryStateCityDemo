@@ -25,10 +25,15 @@ namespace Country_city_state.Controllers
         [HttpGet]
         public IActionResult GetUsers()
         {
-
             var userInList = _userRepository.GetUsers().ToList();
-           
-            return Ok(userInList);
+            var DataList = userInList.Select(e => new
+            {
+                id = e.Id,
+                username = e.UserName,
+                password = SecurityPurpose.DecryptionData(e.Password),
+                Role = e.Role
+            });
+            return Ok(DataList);
 
         }
         [HttpPost("register")]

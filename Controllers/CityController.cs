@@ -22,43 +22,35 @@ namespace Country_city_state.Controllers
         public CityController(ApplicationDbcontext context/*, IDataProtectionProvider dataProtectionProvider, SecurityPurpose securityPurpose*/)
         {
             _context = context;
-//_dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.forsecurity);
+          // _dataprotector = dataProtectionProvider.CreateProtector(securityPurpose.key);
         }
-        [AllowAnonymous]
+        // [AllowAnonymous]
         [HttpGet]
         public IActionResult GetCity()
         {
                 var citiesList = _context.Cities.Include(c => c.State).Include(c => c.State.Country).ToList().Select(e => new
                 {
                 id = e.id,
-                name = SecurityPurpose.DecrtyptionData(e.Name),
+                name = SecurityPurpose.DecryptionData(e.Name),
                 stateid = e.Stateid,
-                statename = SecurityPurpose.DecrtyptionData(e.State.Name),
+                statename = SecurityPurpose.DecryptionData(e.State.Name),
                 countryid = e.State.Countryid,
-                countryname = SecurityPurpose.DecrtyptionData(e.State.Country.Name),
+                countryname = SecurityPurpose.DecryptionData(e.State.Country.Name),
 
             });
-            /*var outData =citiesList.Select(e => new
-            {
-                id=e.id,
-                name=SecurityPurpose.DecrtyptionData(e.Name),
-                stateid=e.Stateid,
-                statename=SecurityPurpose.DecrtyptionData(e.State.Name),
-                countryid=e.State.Countryid,
-                countryname=SecurityPurpose.DecrtyptionData(e.State.Country.Name),
-            });*/
+           
 
             return Ok(citiesList);
 
         }
-        [AllowAnonymous]
+      
         [HttpPost]
         public IActionResult SaveCities([FromBody]City city)
         {
             if (city == null) return BadRequest();
             else
             {
-               city.Name = SecurityPurpose.Encrtyption(city.Name);
+               city.Name = SecurityPurpose.Encryption(city.Name);
                // city.Name = _dataprotector.Protect(city.Name);
                 _context.Cities.Add(city);
                 _context.SaveChanges();

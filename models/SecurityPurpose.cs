@@ -10,66 +10,64 @@ namespace Country_city_state
 {
     public class SecurityPurpose
     {
-        public string key ="key";
-        public static string Encrtyption(string text)
+        private readonly static string keySize = "akashsharma@gmail2612";
+        /*        public static string Encryption(string text)
+                {
+                    byte[] addDataText = ASCIIEncoding.ASCII.GetBytes(text);
+                    string encryptname = Convert.ToBase64String(addDataText);
+                    return encryptname;
+                }
+                public static string DecryptionData(string text)
+                {
+                    byte[] encryptName = Convert.FromBase64String(text);
+                    string decryptName = ASCIIEncoding.ASCII.GetString(encryptName);
+                    return decryptName;
+                }*/
+        public static string Encryption(string clearText)
         {
-            byte[] addDataText = ASCIIEncoding.ASCII.GetBytes(text);
-            string encryptname = Convert.ToBase64String(addDataText);
-            return encryptname;
+            string encryptionKey = "MAKV2SPBNI99212";
+            byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);
+            using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(clearBytes, 0, clearBytes.Length);
+                        cs.Close();
+                    }
+                    clearText = Convert.ToBase64String(ms.ToArray());
+                }
+            }
+
+            return clearText;
         }
-        public static string DecrtyptionData(string text)
+
+        public static string DecryptionData(string cipherText)
         {
-            byte[] encryptName = Convert.FromBase64String(text);
-            string decryptName = ASCIIEncoding.ASCII.GetString(encryptName);
-            return decryptName;
+            string encryptionKey = "MAKV2SPBNI99212";
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(encryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(cipherBytes, 0, cipherBytes.Length);
+                        cs.Close();
+                    }
+                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
+                }
+            }
+
+            return cipherText;
         }
 
-
-        /* public static string Encrypt(string text)
-          {
-              byte[] iv = new byte[32];
-              byte[] array;
-              using (Aes aes = Aes.Create())
-              {
-                  aes.Key = Encoding.UTF8.GetBytes(key);
-                  aes.IV = iv;
-                  ICryptoTransform encrypt = aes.CreateEncryptor(aes.Key, aes.IV);
-                  using (MemoryStream ms=new MemoryStream()){
-                      using(CryptoStream cryptoStream=new CryptoStream((Stream)ms,encrypt,CryptoStreamMode.Write))
-                      {
-                          using(StreamWriter streamWriter=new StreamWriter((Stream) cryptoStream))
-                          {
-                              streamWriter.Write(text);
-                          }
-                          array = ms.ToArray();
-                      }
-                  }
-
-              }
-              return Convert.ToBase64String(array);
-          }
-          public static string Decrypt(string text)
-          {
-              byte[] iv = new byte[16];
-              byte[] buffer = Convert.FromBase64String(text);
-              using(Aes aes = Aes.Create())
-              {
-                  aes.Key = Encoding.UTF8.GetBytes(key);
-                  aes.IV = iv;
-                  ICryptoTransform decrypto = aes.CreateDecryptor(aes.Key, aes.IV);
-                  using(MemoryStream ms=new MemoryStream(buffer))
-                  {
-                      using (CryptoStream cryptoStream = new CryptoStream((Stream)ms, decrypto, CryptoStreamMode.Read))
-                      {
-                          using (StreamReader sr=new StreamReader(cryptoStream))
-                          {
-                              return sr.ReadToEnd();
-                          }
-                      }
-                  }
-              }
-
-        }
-*/
     }
 }
